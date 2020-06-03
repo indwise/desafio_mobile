@@ -1,8 +1,10 @@
 import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
-import { createStackNavigator } from '@react-navigation/stack'
+import { createStackNavigator, HeaderBackButton } from '@react-navigation/stack'
 
 import Home from './pages/home/home'
+import Dados from './pages/dados/dados'
+import Banco from './pages/sobre/banco'
 
 const Stack = createStackNavigator();
 
@@ -11,11 +13,14 @@ export default function Routes() {
     <NavigationContainer>
       <Stack.Navigator 
         screenOptions={{
-          headerShown: false
+          headerTransparent: true,
+          headerTintColor: '#ffa500',
+          headerTitleAlign: 'center'
+
         }}>
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Dados" component={'dados'} />
-        <Stack.Screen name="Sobre" component={'sobre'} />
+        <Stack.Screen name="Home" component={Home} options={{ headerShown: false  }} />
+        <Stack.Screen name="Dados" component={Dados} />
+        <Stack.Screen name="Banco" component={Banco} />
       </Stack.Navigator>
     </NavigationContainer>
   )
