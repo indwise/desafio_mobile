@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     fontSize: hp('3%')
   },
   containerFetch: {
-    marginTop: hp('10%'),
+    marginTop: hp('1%'),
     marginBottom: hp('11%')
   },
   viewFlatList: {

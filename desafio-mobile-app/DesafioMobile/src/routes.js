@@ -1,10 +1,11 @@
 import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
-import { createStackNavigator, HeaderBackButton } from '@react-navigation/stack'
+import { createStackNavigator, HeaderBackButton, HeaderTitle } from '@react-navigation/stack'
 
 import Home from './pages/home/home'
 import Dados from './pages/dados/dados'
-import Banco from './pages/sobre/banco'
+import Listar from './pages/sobre/listar'
+import { color } from 'react-native-reanimated'
 
 const Stack = createStackNavigator();
 
@@ -13,14 +14,16 @@ export default function Routes() {
     <NavigationContainer>
       <Stack.Navigator 
         screenOptions={{
-          headerTransparent: true,
-          headerTintColor: '#ffa500',
-          headerTitleAlign: 'center'
-
+          headerTransparent: false,
+          headerTintColor: '#FFF',
+          headerTitleAlign: 'center',
+          headerStyle: {
+            backgroundColor: '#ffa500'
+          }
         }}>
         <Stack.Screen name="Home" component={Home} options={{ headerShown: false  }} />
-        <Stack.Screen name="Dados" component={Dados} />
-        <Stack.Screen name="Banco" component={Banco} />
+        <Stack.Screen name="Dados" component={Dados} headerStyle={{ backgroundColor: '#ffa500' }} options={{ title: 'Sails.js Releases' }}/>
+        <Stack.Screen name="Banco" component={Listar} headerStyle={{ backgroundColor: '#ffa500' }} options={{ title: 'Comentarios' }} />
       </Stack.Navigator>
     </NavigationContainer>
   )

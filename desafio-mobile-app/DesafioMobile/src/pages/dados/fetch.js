@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Text, FlatList, View, ActivityIndicator } from 'react-native'
+import moment from 'moment'
+import tz from 'moment-timezone'
 
 import Styles from './styles'
 
@@ -23,7 +25,7 @@ export default function Fetch() {
           data={releases}
           renderItem={({ item }) => (
             <View style={Styles.viewFlatList}>
-              <Text style={Styles.listText}>Created at: {item.created_at}</Text>
+              <Text style={Styles.listText}>Created at: {moment(item.created_at).tz('America/Sao_Paulo').format('Do MMMM YYYY, h:mm:ss a')}</Text>
               <Text style={Styles.listText}>Tag name: {item.tag_name}</Text>
             </View>
           )}
