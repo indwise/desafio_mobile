@@ -19,7 +19,8 @@
     "react-native-reanimated": "^1.9.0",
     "react-native-responsive-screen": "^1.4.1",
     "react-native-safe-area-context": "^3.0.2",
-    "react-native-screens": "^2.8.0"
+    "react-native-screens": "^2.8.0",
+    "react-native-sqlite-storage": "^5.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",
