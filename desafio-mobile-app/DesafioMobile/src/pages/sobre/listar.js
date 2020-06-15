@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react'
-import { View, Text, FlatList, ImageBackground, Image, TouchableOpacity, Button, ActivityIndicator, Modal } from 'react-native'
+import { useIsFocused } from '@react-navigation/native'
+import { View, Text, FlatList, ImageBackground, Image, TouchableOpacity, Button, ActivityIndicator, Modal, TouchableHighlight } from 'react-native'
 
 import { openDatabase } from 'react-native-sqlite-storage'
 
@@ -9,58 +10,32 @@ import Styles from './styles'
 
 const db = openDatabase("myDatabase.db", "1.0", 200000, DBFunc.openCB(), DBFunc.errorCB());
 
-function clearDB() {
-  db.transaction((tx) => {
-    tx.executeSql('DROP TABLE table_comment', [], (tx, resultado) => {    
-      console.log('DataBase deleted');
-  })
-  });
-}
 
-function deleteItem(id) {
-  db.transaction((tx) => {
-    tx.executeSql('DELETE FROM table_comment WHERE id=?', [id], (tx, results) => {
-      console.log('Results', results.rowsAffected);
-          if (results.rowsAffected > 0) {
-            console.log('Deletado com sucesso !')
-          }
-    });
-  });
-}
-
-function addItem(tag_name, comment) {
-  db.transaction((tx) => {
-    tx.executeSql('INSERT INTO table_comment (tag_name, comment) VALUES (?,?)', [tag_name, comment], (tx, results) => {
-      if (results.rowsAffected > 0) {
-        console.log('Adicionado comsucesso !')
-      }
-    });
-  });
-}
-
-function addItemTest(tag_name, comment) {
-  db.transaction((tx) => {
-    tx.executeSql('INSERT INTO table_comment (tag_name, comment) VALUES (?,?)', [tag_name, comment], (tx, results) => {
-      if (results.rowsAffected > 0) {
-        console.log('Adicionado comsucesso !')
-      }
-    });
-  });
-}
-
-export default function Listar({ navigation, state }) {
+export default function Listar({ route, navigation }) {
   const [items, setItems] = useState([]);
   const [hasData, setHasData] = useState(false);
   const [isLoading, setLoading] = useState(true);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [itemsQnt, setItemsQnt] = useState(0);
+
+  const isFocused = useIsFocused();
+
+  function clearDB() {
+    db.transaction((tx) => {
+      tx.executeSql('DROP TABLE table_comment', [], (tx, resultado) => {    
+        console.log('DataBase deleted');
+      })
+    });
+    setItemsQnt(0);
+  }
+  
 
 
    useEffect(() => {  
-    clearDB();
-    db.transaction((tx) => {
+      db.transaction((tx) => {
       tx.executeSql('CREATE TABLE IF NOT EXISTS table_comment(id INTEGER PRIMARY KEY AUTOINCREMENT, tag_name VARCHAR(20), comment VARCHAR(150))', []);
       tx.executeSql('SELECT * FROM table_comment', [], (tx, results) => {
         var temp = [];
+        setItemsQnt(results.rows.length);
         if (results.rows.length > 0) {
           setHasData(true);
           for (let i = 0; i < results.rows.length; ++i) {
@@ -68,10 +43,13 @@ export default function Listar({ navigation, state }) {
          }
          setItems(temp);
         }
+        else {
+          setHasData(false)
+        }
         setLoading(false);
      });
     });
-  }, [hasData]);
+  }, [isFocused]);
 
   return(
     <ImageBackground source={require('./img/background-img.png')} style={Styles.backgroundImage}>
@@ -80,59 +58,50 @@ export default function Listar({ navigation, state }) {
         { hasData ?
           <View>
 
+            <View style={Styles.adicionarView}>
+              <TouchableOpacity style={Styles.adicionarTouch} onPress={() => navigation.navigate('AddComment')}>
+                <Image source={require('./img/adicionar.png')} style={Styles.adicionarImage} />
+              </TouchableOpacity>
+            </View>
             
             <FlatList
-            style={Styles.list}
             keyExtractor={(item) => item.id}
             data={items}
             renderItem={({ item }) => (
 
               <View style={Styles.listItem}>
-                <View style={Styles.iconsContainer}>
-                  <TouchableOpacity style={Styles.alterarTouch}>
-                    <Image source={require('./img/alterar.png')} style={Styles.alterarImage} />
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={ deleteItem(item.id) }>
-                    <Image source={require('./img/deletar.png')} style={Styles.deletarImage} />
-                  </TouchableOpacity>    
-                </View>
                 <View style={Styles.indListItem}>
                   <Text style={Styles.labelTitle}>Tag Name: </Text> 
                   <Text style={Styles.insideText}>{item.tag_name}</Text>
                 </View>
                 <View style={Styles.indListItem}>
                   <Text style={Styles.labelTitle}>Comentário: </Text> 
-                  <Text style={Styles.insideText}>{item.comment.slice(0, 20)}...</Text>
+                  { item.comment.length > 20 ? <Text>{item.comment.slice(0,20)}...</Text> : <Text>{item.comment}</Text> }
                 </View>
                 <View style={Styles.expListItem}>
-                  <TouchableOpacity>
-                    <Text style={{ color: '#575757' }}>Clique aqui para expandir</Text> 
-                  </TouchableOpacity>
+                  <TouchableHighlight style={Styles.expHighlight} onPress={() => navigation.navigate('ExpComment', item)}>
+                    <Text style={Styles.expText}>Clique para expandir</Text>
+                  </TouchableHighlight>
                 </View>
               </View>
   
             )}
             />
 
-            <View style={Styles.adicionarView}>
-              <TouchableOpacity style={Styles.adicionarTouch}>
+          </View>
+
+          : 
+
+          <View>
+
+            <View style={Styles.adicionarViewWoData}>
+              <TouchableOpacity style={Styles.adicionarTouch} onPress={() => navigation.navigate('AddComment')}>
                 <Image source={require('./img/adicionar.png')} style={Styles.adicionarImage} />
               </TouchableOpacity>
             </View>
 
-          </View>
-
-          : 
-          <View>
-
-            <View>
+            <View style={{ flex: 1 }}>
               <Text style={Styles.requestText}>Adicione seu primeiro comentário !</Text> 
-            </View>
-
-            <View style={Styles.adicionarView}>
-            <TouchableOpacity style={Styles.adicionarTouch}>
-              <Image source={require('./img/adicionar.png')} style={Styles.adicionarImage} />
-            </TouchableOpacity>
             </View>
 
           </View>
