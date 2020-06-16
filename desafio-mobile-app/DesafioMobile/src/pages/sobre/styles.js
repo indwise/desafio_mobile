@@ -3,6 +3,11 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 
 const styles = StyleSheet.create({
   // Listar.js
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   backgroundImage: {
     flex: 1,
     justifyContent: 'center',
@@ -76,18 +81,15 @@ const styles = StyleSheet.create({
     color:'#fff',
   },
 
-  // expComment.js
   alterarImage: {
     width: wp('8%'),
     height: hp('4%'),
     marginBottom: hp('3%'),
-    marginLeft: wp('3%')
   },
   deletarImage: {
     width: wp('6.3%'),
     height: hp('5%'),
     marginBottom: hp('3%'),
-    marginRight: wp('3%')
   },
   textExpComment: {
     fontSize: hp('3%'), 
@@ -144,6 +146,63 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: hp('3%')
   },
+
+  // Modal
+  modal: {
+    width: wp('60%'),
+    height: hp('60%')
+  },
+  modalView: {
+    borderRadius: 10,
+    backgroundColor: "white",
+    width: wp('65%'),
+    height: hp('60%'),
+    alignSelf: 'center',
+    alignItems: 'center',
+    padding: wp('5%')
+  },
+  modalText: {
+    fontSize: hp('2%'),
+    color: '#ffa500',
+    borderWidth: 1,
+    borderColor: '#ffa500',
+    borderRadius: 10,
+    padding: wp('2%'),
+    fontWeight: 'bold'
+  },
+  viewTI: {
+    padding: wp('3%')
+  },  
+  modalTI: {
+    textAlign: 'center',
+    borderBottomWidth: 1,
+    width: wp('50%')
+  },
+  viewIcons: {
+    flex: 1,
+    flexDirection: 'row'
+  },
+  updateIconView: {
+    flex: 1, 
+    justifyContent: 'flex-end'
+  },
+  buttonCancelView: {
+    flex: 1, 
+    justifyContent: 'flex-end',
+    marginBottom: hp('3%'),
+  },
+  deleteIconView: {
+    flex: 1, 
+    alignItems: 'flex-end', 
+    justifyContent: 'flex-end'
+  },
+  saveButtonView: {
+    flex: 1,
+    justifyContent: 'space-between',
+    marginBottom: hp('3%'),
+    padding: ('5%'),
+    margin: wp('2%'),
+  }
 });
 
 

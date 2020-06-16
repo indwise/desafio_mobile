@@ -7,7 +7,7 @@ import Home from './pages/home/home'
 import Dados from './pages/dados/dados'
 import Listar from './pages/sobre/listar'
 import { color } from 'react-native-reanimated'
-import ExpComment from './pages/sobre/expComment'
+
 import AddComment from './pages/sobre/addComment'
 
 const Stack = createStackNavigator();
@@ -42,16 +42,10 @@ export default function Routes() {
           options={{ title: 'Comentarios' }}
         />
         <Stack.Screen 
-          name="ExpComment" 
-          component={ExpComment} 
-          headerStyle={{ backgroundColor: '#ffa500' }} 
-          options={{ title: 'Comentário Completo' }}
-        />
-        <Stack.Screen 
           name="AddComment" 
           component={AddComment} 
           headerStyle={{ backgroundColor: '#ffa500' }} 
-          options={{ title: 'Comentário Completo' }}
+          options={{ title: 'Adicionando Comentário' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

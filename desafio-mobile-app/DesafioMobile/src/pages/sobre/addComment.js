@@ -17,7 +17,7 @@ export default function AddComment({ route, navigation }) {
   const [commentLen, setcommentLen] = useState(150);
 
   function addItem(tag_name, comment) {
-    if (tag_name.length === 0 || comment.length === 0) {
+    if (tag_name.length === 0 || comment.length === 0 || comment.length > 150 || tag_name.length > 20) {
       Alert.alert('Falha ao adicionar comentário !', 'Por favor informe uma tag name e/ou comentário válido.', 
       [
         { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
@@ -52,7 +52,7 @@ export default function AddComment({ route, navigation }) {
             }
           }
           />
-        <Text style={{ color: '#989e99' }}>({tagNameLen} caracteres restantes)</Text>
+        <Text style={{ color: '#989e99' }}>(Max 20 caracteres)</Text>
         </View>
       </View>
       <View style={Styles.viewTextExpComment}>
@@ -70,7 +70,7 @@ export default function AddComment({ route, navigation }) {
           }
           }
           />
-          <Text style={{ color: '#989e99' }}>({commentLen} caracteres restantes)</Text>
+          <Text style={{ color: '#989e99' }}>(Max 150 caracteres)</Text>
         </View>
       </View>
       <View>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react'
 import { useIsFocused } from '@react-navigation/native'
-import { View, Text, FlatList, ImageBackground, Image, TouchableOpacity, Button, ActivityIndicator, Modal, TouchableHighlight } from 'react-native'
+import { View, Text, FlatList, ImageBackground, Image, TouchableOpacity, Button, ActivityIndicator, TouchableHighlight, TextInput, Alert } from 'react-native'
+import Modal from 'react-native-modal'
 
 import { openDatabase } from 'react-native-sqlite-storage'
 
@@ -12,10 +13,21 @@ const db = openDatabase("myDatabase.db", "1.0", 200000, DBFunc.openCB(), DBFunc.
 
 
 export default function Listar({ route, navigation }) {
+  // Listagem de itens
   const [items, setItems] = useState([]);
   const [hasData, setHasData] = useState(false);
   const [isLoading, setLoading] = useState(true);
-  const [itemsQnt, setItemsQnt] = useState(0);
+  const [tagname, setTagname] = useState('');
+  const [comment, setComment] = useState('');
+  const [id, setId] = useState('');
+
+  // Modal para alterar e deletar
+  const [modalVisible, setModalVisible] = useState(false);
+  const [update, setUpdate] = useState(false);
+  const [newTagName, setNewTagName] = useState('');
+  const [newComment, setNewComment] = useState('');
+  const [tagNameLen, setTagNameLen] = useState(20);
+  const [commentLen, setcommentLen] = useState(150);
 
   const isFocused = useIsFocused();
 
@@ -25,17 +37,67 @@ export default function Listar({ route, navigation }) {
         console.log('DataBase deleted');
       })
     });
-    setItemsQnt(0);
+  }
+
+  function selectItems() {
+    db.transaction((tx) => {
+      tx.executeSql('SELECT * FROM table_comment', [], (tx, results) => {
+        var temp = [];
+        if (results.rows.length > 0) {
+          setHasData(true);
+          for (let i = 0; i < results.rows.length; ++i) {
+           temp.push(results.rows.item(i));
+         }
+         setItems(temp);
+        }
+        else {
+          setHasData(false)
+        }
+     });
+    });
+  }
+
+  function updateItem(newTagName, newComment, id) {
+    if (newTagName.length === 0 || newComment.length === 0 || newTagName.length > 20 || newComment.length > 150) {
+      Alert.alert('Falha ao alterar comentário !', 'Por favor informe uma tag name e/ou comentário válido.', 
+      [
+        { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+        { text: 'Ok', onPress: () => console.log('OK Pressed')}
+      ]);
+    }
+    else {
+      db.transaction((tx) => {
+        tx.executeSql('UPDATE table_comment SET tag_name=(?), comment=(?) WHERE id=(?)', [newTagName, newComment, id], (tx, results) => {
+          console.log('Results', results.rowsAffected);
+              if (results.rowsAffected > 0) {
+                console.log('Alterado com sucesso !')
+              }
+        });
+        selectItems();
+      })
+      setUpdate(false);
+      setModalVisible(false);
+    }
+  }
+
+  function deleteItem(id) {
+    db.transaction((tx) => {
+      tx.executeSql('DELETE FROM table_comment WHERE id=?', [id], (tx, results) => {
+        console.log('Results', results.rowsAffected);
+            if (results.rowsAffected > 0) {
+              console.log('Deletado com sucesso !')
+            }
+      });
+      selectItems();
+    });
+    setModalVisible(false);
   }
   
-
-
-   useEffect(() => {  
+   useEffect(() => {
       db.transaction((tx) => {
       tx.executeSql('CREATE TABLE IF NOT EXISTS table_comment(id INTEGER PRIMARY KEY AUTOINCREMENT, tag_name VARCHAR(20), comment VARCHAR(150))', []);
       tx.executeSql('SELECT * FROM table_comment', [], (tx, results) => {
         var temp = [];
-        setItemsQnt(results.rows.length);
         if (results.rows.length > 0) {
           setHasData(true);
           for (let i = 0; i < results.rows.length; ++i) {
@@ -47,23 +109,92 @@ export default function Listar({ route, navigation }) {
           setHasData(false)
         }
         setLoading(false);
-     });
+      });
     });
   }, [isFocused]);
+
 
   return(
     <ImageBackground source={require('./img/background-img.png')} style={Styles.backgroundImage}>
       { isLoading ? <ActivityIndicator size="large" color="#ffa500" /> : (
         <View>
         { hasData ?
-          <View>
+          <View style={Styles.centeredView} >
 
             <View style={Styles.adicionarView}>
               <TouchableOpacity style={Styles.adicionarTouch} onPress={() => navigation.navigate('AddComment')}>
                 <Image source={require('./img/adicionar.png')} style={Styles.adicionarImage} />
               </TouchableOpacity>
             </View>
+
+            <Modal
+            isVisible={modalVisible}
+            > 
+              <View style={Styles.modalView} >
+                <View>
+                  <Text style={Styles.modalText}>Tag Name</Text>
+                </View>
+                <View style={Styles.viewTI}>
+                  <TextInput
+                  editable={update}
+                  style={Styles.modalTI}
+                  defaultValue={tagname}
+                  maxLength={20}
+                  onChangeText={(val) => {
+                    setNewTagName(val)
+                    const maxLength = 20;
+                    setTagNameLen(maxLength - val.length);
+                    }
+                  }
+                  />
+                  { update ? <Text style={{ color: '#989e99' }}>(Max 20 restantes)</Text> : null}
+                </View>
+                <View>
+                  <Text style={Styles.modalText}>Comment</Text>
+                </View>
+                <View style={Styles.viewTI}>
+                <TextInput
+                  editable={update}
+                  style={Styles.modalTI}
+                  defaultValue={comment}
+                  multiline
+                  maxLength={150}
+                  onChangeText={(val) => {
+                    setNewComment(val);
+                    const maxLength = 150;
+                    setcommentLen(maxLength - val.length);
+                  }
+                }
+                />
+                { update ? <Text style={{ color: '#989e99' }}>(Max 150 caracteres)</Text> : null} 
+                </View>
+                { update ? 
+
+                <View style={Styles.saveButtonView}>
+                <Button onPress={() => updateItem(newTagName, newComment, id)} title='Salvar' color='#ffa500' />
+                </View>
+                :
+                <View style={Styles.viewIcons}>
+                <View style={Styles.updateIconView}>
+                  <TouchableOpacity onPress={() => { setUpdate(true); setNewComment(comment); setNewTagName(tagname); setcommentLen(150 - comment.length); setTagNameLen(20 - tagname.length) }}>
+                    <Image source={require('./img/alterar.png')} style={Styles.alterarImage}/>
+                  </TouchableOpacity>
+                </View>
+                <View style={Styles.buttonCancelView}>
+                  <Button onPress={() => setModalVisible(false)} title='Fechar' color='#000000' />
+                </View>
+                <View style={Styles.deleteIconView}>
+                  <TouchableOpacity onPress={() => deleteItem(id)}>
+                    <Image source={require('./img/deletar.png')} style={Styles.deletarImage}/>
+                  </TouchableOpacity>
+                </View>
+              </View>
+                }
+              </View>
+            </Modal>
+
             
+
             <FlatList
             keyExtractor={(item) => item.id}
             data={items}
@@ -79,7 +210,7 @@ export default function Listar({ route, navigation }) {
                   { item.comment.length > 20 ? <Text style={Styles.insideText}>{item.comment.slice(0,20)}...</Text> : <Text style={Styles.insideText}>{item.comment}</Text> }
                 </View>
                 <View style={Styles.expListItem}>
-                  <TouchableHighlight style={Styles.expHighlight} onPress={() => navigation.navigate('ExpComment', item)}>
+                  <TouchableHighlight style={Styles.expHighlight} onPress={() => { setModalVisible(true); setTagname(item.tag_name); setComment(item.comment); setId(item.id); }}>
                     <Text style={Styles.expText}>Clique aqui para expandir</Text>
                   </TouchableHighlight>
                 </View>
