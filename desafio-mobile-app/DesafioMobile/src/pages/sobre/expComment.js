@@ -104,7 +104,9 @@ export default function ExpComment({ route, navigation }) {
           <Text style={{ color: '#989e99' }}>({commentLen} caracteres restantes)</Text>
         </View>
         :
+          <View style={{ flex: 1, justifyContent: 'center' }}>
           <Text style={Styles.commentTxt}>{ comment }</Text>
+          </View>
         }
         </View>
       </View>
@@ -115,7 +117,7 @@ export default function ExpComment({ route, navigation }) {
         </TouchableOpacity>
       </View>
       :
-      <View style={{ flex: 1, flexDirection: 'row' }}>
+      <View style={Styles.deleteUpdateView}>
       <View style={{ flex: 1, justifyContent: 'flex-end' }}>
         <TouchableOpacity onPress={() => setUpdate(true)}>
           <Image source={require('./img/alterar.png')} style={Styles.alterarImage}/>

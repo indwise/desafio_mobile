@@ -112,6 +112,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: hp('2.5%')
   },
+  commentView: {
+    flex: 1,
+    marginTop: hp('4%'),
+    alignItems: 'center',
+  },
+  deleteUpdateView: {
+    height: hp('7.5%'),
+    flexDirection: 'row'
+  },
 
   // addComment.js
   tagNameTI: {
@@ -129,7 +138,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent:'center',
     width: wp('100%'),
-    height: hp('7%')
+    height: hp('7.5%')
   },
   buttonText: {
     color: '#FFF',
