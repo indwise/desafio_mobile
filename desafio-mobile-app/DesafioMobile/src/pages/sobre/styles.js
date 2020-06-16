@@ -16,14 +16,12 @@ const styles = StyleSheet.create({
   listItem: {
     width: wp('75%'),
     height: hp('15%'),
-    backgroundColor: '#ebebeb',
+    backgroundColor: '#FFF',
     opacity: 1,
     padding: hp('2%'),
     margin: hp('2%'),
-    borderBottomRightRadius: 20,
-    borderBottomLeftRadius: 20,
-    borderTopRightRadius: 20,
-    borderTopLeftRadius: 20,
+    borderWidth: 3,
+    borderColor: '#ffa500'
     },
   adicionarImage: {
     width: wp('17%'),
@@ -54,9 +52,11 @@ const styles = StyleSheet.create({
   },
   labelTitle: {
     fontWeight: 'bold',
+    color: '#000000'
   },
   insideText: {
-    marginRight: hp('2%')
+    marginRight: hp('2%'),
+    color: '#000000'
   },
   expListItem: {
     alignItems: 'center',
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   },
   expHighlight: {
     borderRadius: 10,
-    backgroundColor: '#000000',
+    backgroundColor: '#ffa500',
     borderWidth: 1,
     borderColor: '#fff',
     width: wp('65%'),
@@ -105,10 +105,12 @@ const styles = StyleSheet.create({
     width: wp('60%'),
   },
   tagNameTxt: {
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: hp('3%')
   },
   commentTxt: {
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: hp('2.5%')
   },
 
   // addComment.js

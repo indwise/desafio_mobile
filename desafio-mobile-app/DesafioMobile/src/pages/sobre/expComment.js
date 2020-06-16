@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, TouchableOpacity, Image, TextInput } from 'react-native'
+import { View, Text, TouchableOpacity, Image, TextInput, Alert } from 'react-native'
 
 import { openDatabase } from 'react-native-sqlite-storage'
 
@@ -38,16 +38,25 @@ export default function ExpComment({ route, navigation }) {
   }
 
   function updateItem(newTagName, newComment, id) {
-    db.transaction((tx) => {
-      tx.executeSql('UPDATE table_comment SET tag_name=(?), comment=(?) WHERE id=(?)', [newTagName, newComment, id], (tx, results) => {
-        console.log('Results', results.rowsAffected);
-            if (results.rowsAffected > 0) {
-              console.log('Alterado com sucesso !')
-            }
-      });
-    })
-    setUpdate(false);
-    navigation.navigate('Banco');
+    if (newTagName.length === 0 || newComment.length === 0) {
+      Alert.alert('Falha ao alterar comentário !', 'Por favor informe uma tag name e/ou comentário válido.', 
+      [
+        { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+        { text: 'Ok', onPress: () => console.log('OK Pressed')}
+      ]);
+    }
+    else {
+      db.transaction((tx) => {
+        tx.executeSql('UPDATE table_comment SET tag_name=(?), comment=(?) WHERE id=(?)', [newTagName, newComment, id], (tx, results) => {
+          console.log('Results', results.rowsAffected);
+              if (results.rowsAffected > 0) {
+                console.log('Alterado com sucesso !')
+              }
+        });
+      })
+      setUpdate(false);
+      navigation.navigate('Banco');
+    }
   }
 
   return(
@@ -62,8 +71,7 @@ export default function ExpComment({ route, navigation }) {
             defaultValue={tag_name}
             maxLength={20}
             onChangeText={(val) => {
-              console.log('tag name size:', val)
-              setNewTagName(val.length === 0 ? tag_name : val)
+              setNewTagName(val)
               const maxLength = 20;
               setTagNameLen(maxLength - val.length);
               }
@@ -87,8 +95,7 @@ export default function ExpComment({ route, navigation }) {
           multiline
           maxLength={150}
           onChangeText={(val) => {
-            console.log('comment size:', val)
-            setNewComment(val.length === 0 ? comment : val);
+            setNewComment(val);
             const maxLength = 150;
             setcommentLen(maxLength - val.length);
           }

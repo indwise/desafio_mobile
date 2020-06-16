@@ -76,11 +76,11 @@ export default function Listar({ route, navigation }) {
                 </View>
                 <View style={Styles.indListItem}>
                   <Text style={Styles.labelTitle}>Comentário: </Text> 
-                  { item.comment.length > 20 ? <Text>{item.comment.slice(0,20)}...</Text> : <Text>{item.comment}</Text> }
+                  { item.comment.length > 20 ? <Text style={Styles.insideText}>{item.comment.slice(0,20)}...</Text> : <Text style={Styles.insideText}>{item.comment}</Text> }
                 </View>
                 <View style={Styles.expListItem}>
                   <TouchableHighlight style={Styles.expHighlight} onPress={() => navigation.navigate('ExpComment', item)}>
-                    <Text style={Styles.expText}>Clique para expandir</Text>
+                    <Text style={Styles.expText}>Clique aqui para expandir</Text>
                   </TouchableHighlight>
                 </View>
               </View>

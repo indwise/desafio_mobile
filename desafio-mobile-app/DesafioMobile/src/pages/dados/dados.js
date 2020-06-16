@@ -9,7 +9,7 @@ export default function Dados() {
 
 
   return(
-    <View style={Styles.container}>
+    <ImageBackground source={require('./img/background.png')} style={Styles.container}>
       <View>
         { shouldFetch ? <Fetch /> : <View style={Styles.container}><Text style={Styles.requestText}>Pressione Requisitar Dados</Text></View>}
       </View>
@@ -18,6 +18,6 @@ export default function Dados() {
           <Text style={Styles.buttonText}>Requisitar Dados</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ImageBackground>
   )
 }

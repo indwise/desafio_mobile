@@ -18,7 +18,11 @@ export default function AddComment({ route, navigation }) {
 
   function addItem(tag_name, comment) {
     if (tag_name.length === 0 || comment.length === 0) {
-      Alert.alert('Please type a tag name and/or comment !');
+      Alert.alert('Falha ao adicionar comentário !', 'Por favor informe uma tag name e/ou comentário válido.', 
+      [
+        { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+        { text: 'Ok', onPress: () => console.log('OK Pressed')}
+      ]);
     }
     else {
       db.transaction((tx) => {
