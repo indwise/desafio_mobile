@@ -1,33 +1,27 @@
 # Desafio Mobile indWise
 
-## Desenvolvimento
-O aplicativo foi desenvolvido utilizando **React Native** em um dispositivo virtual **Pixel 3a API 28**.
+## Desafio 0 - Git básico
+Faça um fork deste repositório e comece a trabalhar com seu código! Pode utilizar o framework mobile de sua preferência (Nativo, flutter, react-native, ionic, etc)...
 
-## Como compilar
-Primeiramente, clone o repositório.
+O projeto deve ser compilado através de um comando descrito no README.md do projeto. Seja ele baseado em npm, ou um .sh para compilação direta.
 
-Navegue até o diretório **DesafioMobile**:
+## Desafio 1 - Estrutura básica
 
-```properties
-cd desafio-mobile-app/DesafioMobile
-```
+Crie um aplicativo vazio que possua um menu e duas telas separadas. As telas podem conter qualquer coisa, porém devem ser visivelmente diferentes.
 
-Instale as dependências do projeto:
+## Desafio 2 - API e dados
 
-```properties
-npm install
-```
+Em uma das telas adicione um botão de requisitar dados. Ao clicar o aplicativo irá acessar a API do github, e baixaxr os últimos releases do repositório do sails.js. Link para a API do repositório:
 
-Tenha o Android Studio instalado juntamente com: Android SDK e Android Virtual Device.
+``https://api.github.com/repos/balderdashy/sails``
 
-Crie um Dispositivo Virtual (durante o desenvolvimento foi utilizado **Pixel 3a API 28**).
+Baixe as últimas 10 releases e liste o ``tagName`` e a ``createdAt``. A data de createdAt deve ser mostrada no furo-horário America/Sao_Paulo ou fuso horário do dispositivo.
 
-Abra o diretório **Android** no Android Studio, selecione o dispositivo criado, aguarde a sincronização e clique na seta verde para rodá-lo.
+# Desafio 3 - Banco interno
 
-Depois de aberto, execute o projeto com:
+Na outra tela, crie um banco de dados de comentários em SQLite. Que deve terá as seguintes colunas: tagName (digitável) e comentário (digitável).
 
-```properties
-npx react-native start
-```
-
-
+O banco precisa ter as operações:
+* Criar
+* Apagar
+* Editar
