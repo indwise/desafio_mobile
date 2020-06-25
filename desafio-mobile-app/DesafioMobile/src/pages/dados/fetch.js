@@ -21,7 +21,7 @@ export default function Fetch() {
     <View style={[Styles.container, Styles.containerFetch]}>
       { isLoading ? <ActivityIndicator size="large" color="#ffa500" /> : (
         <FlatList
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id.toString()}
           data={releases}
           renderItem={({ item }) => (
             <View style={Styles.viewFlatList}>

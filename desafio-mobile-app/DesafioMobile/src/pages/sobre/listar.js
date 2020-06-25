@@ -26,8 +26,6 @@ export default function Listar({ route, navigation }) {
   const [update, setUpdate] = useState(false);
   const [newTagName, setNewTagName] = useState('');
   const [newComment, setNewComment] = useState('');
-  const [tagNameLen, setTagNameLen] = useState(20);
-  const [commentLen, setcommentLen] = useState(150);
 
   const isFocused = useIsFocused();
 
@@ -94,16 +92,19 @@ export default function Listar({ route, navigation }) {
   }
   
    useEffect(() => {
-      db.transaction((tx) => {
+      
+
+    db.transaction((tx) => {
       tx.executeSql('CREATE TABLE IF NOT EXISTS table_comment(id INTEGER PRIMARY KEY AUTOINCREMENT, tag_name VARCHAR(20), comment VARCHAR(150))', []);
       tx.executeSql('SELECT * FROM table_comment', [], (tx, results) => {
         var temp = [];
         if (results.rows.length > 0) {
+
           setHasData(true);
           for (let i = 0; i < results.rows.length; ++i) {
-           temp.push(results.rows.item(i));
-         }
-         setItems(temp);
+            temp.push(results.rows.item(i));
+          }
+          setItems(temp);
         }
         else {
           setHasData(false)
@@ -111,6 +112,8 @@ export default function Listar({ route, navigation }) {
         setLoading(false);
       });
     });
+
+
   }, [isFocused]);
 
 
@@ -142,8 +145,6 @@ export default function Listar({ route, navigation }) {
                   maxLength={20}
                   onChangeText={(val) => {
                     setNewTagName(val)
-                    const maxLength = 20;
-                    setTagNameLen(maxLength - val.length);
                     }
                   }
                   />
@@ -161,8 +162,6 @@ export default function Listar({ route, navigation }) {
                   maxLength={150}
                   onChangeText={(val) => {
                     setNewComment(val);
-                    const maxLength = 150;
-                    setcommentLen(maxLength - val.length);
                   }
                 }
                 />
@@ -176,7 +175,7 @@ export default function Listar({ route, navigation }) {
                 :
                 <View style={Styles.viewIcons}>
                 <View style={Styles.updateIconView}>
-                  <TouchableOpacity onPress={() => { setUpdate(true); setNewComment(comment); setNewTagName(tagname); setcommentLen(150 - comment.length); setTagNameLen(20 - tagname.length) }}>
+                  <TouchableOpacity onPress={() => { setUpdate(true); setNewComment(comment); setNewTagName(tagname); }}>
                     <Image source={require('./img/alterar.png')} style={Styles.alterarImage}/>
                   </TouchableOpacity>
                 </View>
@@ -196,7 +195,7 @@ export default function Listar({ route, navigation }) {
             
 
             <FlatList
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.id.toString()}
             data={items}
             renderItem={({ item }) => (
 
