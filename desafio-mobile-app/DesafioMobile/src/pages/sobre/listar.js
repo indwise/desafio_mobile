@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react'
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { useIsFocused } from '@react-navigation/native'
 import { View, Text, FlatList, ImageBackground, Image, TouchableOpacity, Button, ActivityIndicator, TouchableHighlight, TextInput, Alert } from 'react-native'
 import Modal from 'react-native-modal'
@@ -49,7 +49,8 @@ export default function Listar({ route, navigation }) {
          setItems(temp);
         }
         else {
-          setHasData(false)
+          setLoading(false);
+          setHasData(false);
         }
      });
     });
@@ -86,33 +87,16 @@ export default function Listar({ route, navigation }) {
               console.log('Deletado com sucesso !')
             }
       });
+      setModalVisible(false);
       selectItems();
     });
-    setModalVisible(false);
   }
   
    useEffect(() => {
-      
-
     db.transaction((tx) => {
       tx.executeSql('CREATE TABLE IF NOT EXISTS table_comment(id INTEGER PRIMARY KEY AUTOINCREMENT, tag_name VARCHAR(20), comment VARCHAR(150))', []);
-      tx.executeSql('SELECT * FROM table_comment', [], (tx, results) => {
-        var temp = [];
-        if (results.rows.length > 0) {
-
-          setHasData(true);
-          for (let i = 0; i < results.rows.length; ++i) {
-            temp.push(results.rows.item(i));
-          }
-          setItems(temp);
-        }
-        else {
-          setHasData(false)
-        }
-        setLoading(false);
-      });
+      selectItems();
     });
-
 
   }, [isFocused]);
 
