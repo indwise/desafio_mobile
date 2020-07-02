@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react'
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { useIsFocused } from '@react-navigation/native'
 import { View, Text, FlatList, ImageBackground, Image, TouchableOpacity, Button, ActivityIndicator, TouchableHighlight, TextInput, Alert } from 'react-native'
 import Modal from 'react-native-modal'
@@ -26,8 +26,6 @@ export default function Listar({ route, navigation }) {
   const [update, setUpdate] = useState(false);
   const [newTagName, setNewTagName] = useState('');
   const [newComment, setNewComment] = useState('');
-  const [tagNameLen, setTagNameLen] = useState(20);
-  const [commentLen, setcommentLen] = useState(150);
 
   const isFocused = useIsFocused();
 
@@ -43,15 +41,19 @@ export default function Listar({ route, navigation }) {
     db.transaction((tx) => {
       tx.executeSql('SELECT * FROM table_comment', [], (tx, results) => {
         var temp = [];
+        console.log(results.rows.length);
         if (results.rows.length > 0) {
-          setHasData(true);
+          if (hasData === false) {
+            setHasData(true);
+          }
           for (let i = 0; i < results.rows.length; ++i) {
            temp.push(results.rows.item(i));
          }
          setItems(temp);
         }
         else {
-          setHasData(false)
+          setHasData(false);
+          setLoading(false);
         }
      });
     });
@@ -84,33 +86,25 @@ export default function Listar({ route, navigation }) {
     db.transaction((tx) => {
       tx.executeSql('DELETE FROM table_comment WHERE id=?', [id], (tx, results) => {
         console.log('Results', results.rowsAffected);
-            if (results.rowsAffected > 0) {
-              console.log('Deletado com sucesso !')
-            }
+        if (results.rowsAffected > 0) {
+          console.log('Deletado com sucesso !')
+        }
       });
-      selectItems();
+      setModalVisible(false);
+
     });
-    setModalVisible(false);
+    selectItems();
+
   }
   
    useEffect(() => {
+
       db.transaction((tx) => {
-      tx.executeSql('CREATE TABLE IF NOT EXISTS table_comment(id INTEGER PRIMARY KEY AUTOINCREMENT, tag_name VARCHAR(20), comment VARCHAR(150))', []);
-      tx.executeSql('SELECT * FROM table_comment', [], (tx, results) => {
-        var temp = [];
-        if (results.rows.length > 0) {
-          setHasData(true);
-          for (let i = 0; i < results.rows.length; ++i) {
-           temp.push(results.rows.item(i));
-         }
-         setItems(temp);
-        }
-        else {
-          setHasData(false)
-        }
-        setLoading(false);
+        tx.executeSql('CREATE TABLE IF NOT EXISTS table_comment(id INTEGER PRIMARY KEY AUTOINCREMENT, tag_name VARCHAR(20), comment VARCHAR(150))', []);
+        selectItems();
       });
-    });
+      setLoading(false);
+
   }, [isFocused]);
 
 
@@ -118,16 +112,8 @@ export default function Listar({ route, navigation }) {
     <ImageBackground source={require('./img/background-img.png')} style={Styles.backgroundImage}>
       { isLoading ? <ActivityIndicator size="large" color="#ffa500" /> : (
         <View>
-        { hasData ?
-          <View style={Styles.centeredView} >
 
-            <View style={Styles.adicionarView}>
-              <TouchableOpacity style={Styles.adicionarTouch} onPress={() => navigation.navigate('AddComment')}>
-                <Image source={require('./img/adicionar.png')} style={Styles.adicionarImage} />
-              </TouchableOpacity>
-            </View>
-
-            <Modal
+          <Modal
             isVisible={modalVisible}
             > 
               <View style={Styles.modalView} >
@@ -142,8 +128,6 @@ export default function Listar({ route, navigation }) {
                   maxLength={20}
                   onChangeText={(val) => {
                     setNewTagName(val)
-                    const maxLength = 20;
-                    setTagNameLen(maxLength - val.length);
                     }
                   }
                   />
@@ -161,8 +145,6 @@ export default function Listar({ route, navigation }) {
                   maxLength={150}
                   onChangeText={(val) => {
                     setNewComment(val);
-                    const maxLength = 150;
-                    setcommentLen(maxLength - val.length);
                   }
                 }
                 />
@@ -176,7 +158,7 @@ export default function Listar({ route, navigation }) {
                 :
                 <View style={Styles.viewIcons}>
                 <View style={Styles.updateIconView}>
-                  <TouchableOpacity onPress={() => { setUpdate(true); setNewComment(comment); setNewTagName(tagname); setcommentLen(150 - comment.length); setTagNameLen(20 - tagname.length) }}>
+                  <TouchableOpacity onPress={() => { setUpdate(true); setNewComment(comment); setNewTagName(tagname); }}>
                     <Image source={require('./img/alterar.png')} style={Styles.alterarImage}/>
                   </TouchableOpacity>
                 </View>
@@ -193,10 +175,19 @@ export default function Listar({ route, navigation }) {
               </View>
             </Modal>
 
+
+        { hasData ?
+          <View style={Styles.centeredView} >
+
+            <View style={Styles.adicionarView}>
+              <TouchableOpacity style={Styles.adicionarTouch} onPress={() => navigation.navigate('AddComment')}>
+                <Image source={require('./img/adicionar.png')} style={Styles.adicionarImage} />
+              </TouchableOpacity>
+            </View>
             
 
             <FlatList
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.id.toString()}
             data={items}
             renderItem={({ item }) => (
 
@@ -207,7 +198,7 @@ export default function Listar({ route, navigation }) {
                 </View>
                 <View style={Styles.indListItem}>
                   <Text style={Styles.labelTitle}>Comentário: </Text> 
-                  { item.comment.length > 20 ? <Text style={Styles.insideText}>{item.comment.slice(0,20)}...</Text> : <Text style={Styles.insideText}>{item.comment}</Text> }
+                  { item.comment.length > 20 ? <Text style={Styles.insideText}>{item.comment}</Text> : <Text style={Styles.insideText}>{item.comment}</Text> }
                 </View>
                 <View style={Styles.expListItem}>
                   <TouchableHighlight style={Styles.expHighlight} onPress={() => { setModalVisible(true); setTagname(item.tag_name); setComment(item.comment); setId(item.id); }}>

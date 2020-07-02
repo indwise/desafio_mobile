@@ -5,7 +5,7 @@ const styles = StyleSheet.create({
   // Listar.js
   centeredView: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "space-between",
     alignItems: "center",
   },
   backgroundImage: {
@@ -19,8 +19,8 @@ const styles = StyleSheet.create({
     fontSize: hp('2.5%')
   },
   listItem: {
-    width: wp('75%'),
-    height: hp('15%'),
+    flex: 1,
+    flexDirection: 'column',
     backgroundColor: '#FFF',
     opacity: 1,
     padding: hp('2%'),
@@ -52,8 +52,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   indListItem: {
+    flexWrap: 'wrap',
+    flex: 1,
     flexDirection: 'row',
-    height: hp('3%')
   },
   labelTitle: {
     fontWeight: 'bold',
@@ -64,8 +65,10 @@ const styles = StyleSheet.create({
     color: '#000000'
   },
   expListItem: {
+    flex: 1,
     alignItems: 'center',
-    marginTop: hp('1%')
+    padding: hp('1%'),
+    margin: hp('1%')
   },
   expHighlight: {
     borderRadius: 10,
